@@ -58,36 +58,23 @@ function updateTime() {
     var h = d.getHours();
     var m = d.getMinutes();
     var s = d.getSeconds();
-    var ms = d.getMilliseconds();
-    var geektime = Math.round(65536 * (3600000 * h + 60000 * m + 1000 * s + ms) / (24 * 60 * 60 * 1000));
-    var formatted_geektime=format_as_a_geek(geektime);
+    
+    var BB=format_part(s, 60)
+    var VV=format_part(m*60+s, 3600)
+    var RR=format_part(h * 3600 + m * 60 + s, 3600*24)
 
-
-    var yy = d.getFullYear();
-    var mm = d.getMonth();
-    var dd = d.getDate();
-
-    var geekdate = Math.round((Date.UTC(yy, mm, dd) - Date.UTC(yy, 0, 1)) / (24 * 60 * 60 * 1000));
-    var formatted_geekdate=format_as_a_geek(geekdate);
-
-    var hexall = new String(formatted_geektime+formatted_geekdate);
-    console.log(hexall)
-    var hexcolor = hexall.substr(hexall.length-6,6);
-    var format_to_display=formatted_geekdate+formatted_geektime;
-
+    var hexa_clock = RR+VV+BB;
     var hh = format_number(h), 
-    mm = format_number(m), 
-    ss = format_number(s);
+        mm = format_number(m), 
+        ss = format_number(s);
 
-    $('#clock').html("0x"+format_to_display+"<br /><small>"+hh+":"+mm+":"+ss+"</small>");
-    // hexall instead of hexcolor
-    $('body').css('background-color', "#"+hexcolor);
+    $('#clock').html("0x"+hexa_clock+"<br /><small>"+hh+":"+mm+":"+ss+"</small>");
+    $('body').css('background-color', "#"+hexa_clock);
 }
-function format_as_a_geek(geekthing) {
-    if (geekthing < 0x1000) padding = "0";
-    if (geekthing < 0x100) padding = "00";
-    if (geekthing < 0x10) padding = "000";
-    return padding + geekthing.toString(16).toUpperCase();
+function format_part(n, base) {
+    var n_converted = Math.round (256 * n/base);
+    var part_hex=n_converted.toString(16).toUpperCase();
+    return  (part_hex.length<2)?"0"+part_hex:part_hex;
 }
 function format_number(n) {
     return  (n < 10)?"0"+n:n;
@@ -96,6 +83,6 @@ function format_number(n) {
 
 $(document).ready(function() {
     updateTime();
-    setInterval("updateTime()", 650);
+    setInterval("updateTime()", 1000);
 });
 
